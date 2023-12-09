@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class GroundDisappear : MonoBehaviourPunCallbacks
+public class GroundFall: MonoBehaviourPunCallbacks
 {
     [SerializeField]
     float fallTime;
@@ -34,7 +34,10 @@ public class GroundDisappear : MonoBehaviourPunCallbacks
     [PunRPC]
     void Count()
     {
-        fallTime += Time.deltaTime;
+        if(MatchingManager.gameStaet)
+        {
+            fallTime += Time.deltaTime;
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)

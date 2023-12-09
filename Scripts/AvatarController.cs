@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -134,7 +135,7 @@ public class AvatarController : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag=="OutSide")
+        if(collision.gameObject.tag=="OutSide" && photonView.IsMine)
         {
             mainCamera.SetActive(true);
             playerCamera.SetActive(false);

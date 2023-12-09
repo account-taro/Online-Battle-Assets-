@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4081134078714821369}
   - component: {fileID: 1349792999071862447}
   - component: {fileID: 1349792999071862452}
-  - component: {fileID: 1349792999071862455}
   - component: {fileID: 1349792999071862448}
+  - component: {fileID: 2678188063352166511}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Ground
@@ -136,19 +136,6 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &1349792999071862455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3687317934079098707}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ced6b37c4caf8d14792bd2595b441729, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disappearTime: 0
 --- !u!50 &1349792999071862448
 Rigidbody2D:
   serializedVersion: 4
@@ -170,3 +157,16 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2678188063352166511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3687317934079098707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced6b37c4caf8d14792bd2595b441729, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fallTime: 0
