@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows;
 using Input = UnityEngine.Input;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class AvatarController : MonoBehaviourPunCallbacks
     //,IPunObservable
@@ -18,6 +19,7 @@ public class AvatarController : MonoBehaviourPunCallbacks
     GameObject mainCamera;
     public GameObject playerCamera;
     public TextMeshProUGUI situationText;
+    ExitGames.Client.Photon.Hashtable playerProperty;
     private void Start()
     {
         if (!photonView.IsMine)
@@ -31,6 +33,10 @@ public class AvatarController : MonoBehaviourPunCallbacks
         underFoot = transform.Find("UnderFoot").gameObject;
         mainCamera = GameObject.Find("MainCamera");
         situationText = GameObject.Find("SituationText").GetComponent<TextMeshProUGUI>();
+        mainCamera.SetActive(false);
+        playerProperty = new ExitGames.Client.Photon.Hashtable();
+        playerProperty["alive"] = true;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperty);
     }
 
     private const float MaxStamina = 6f;
@@ -45,51 +51,6 @@ public class AvatarController : MonoBehaviourPunCallbacks
     {
         if (photonView.IsMine)
         {
-            //var input = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0f);
-            //horizintal = Input.GetAxis("Horizontal");
-            //vertintal = Input.GetAxis("Vertical");
-            //if (input.sqrMagnitude > 0f)
-            //{
-            //    // 入力があったら、スタミナを減少させる
-            //    currentStamina = Mathf.Max(0f, currentStamina - Time.deltaTime);
-            //    transform.Translate(6f * Time.deltaTime * input.normalized);
-            //    animator.speed = 1;
-            //    if ((horizintal < 0 || horizintal>0))
-            //    {
-            //        animator.SetBool("Beside", true);
-            //        animator.SetBool("Flont", false);
-            //        animator.SetBool("Back", false);
-            //        if (horizintal < 0)
-            //        {
-            //            transform.localScale = new Vector3(-1, 1, 1);
-            //        }
-            //        else
-            //        {
-            //            transform.localScale = new Vector3(1, 1, 1);
-            //        }
-            //    }
-            //    //if(vertintal > 0)
-            //    //{
-            //    //    animator.SetBool("Beside", false);
-            //    //    animator.SetBool("Flont", false);
-            //    //    animator.SetBool("Back", true);
-            //    //}
-            //    //if (vertintal < 0)
-            //    //{
-            //    //    animator.SetBool("Beside", false);
-            //    //    animator.SetBool("Flont", true);
-            //    //    animator.SetBool("Back", false);
-            //    //}
-
-            //}
-            //else
-            //{
-            //    // 入力がなかったら、スタミナを回復させる
-            //    currentStamina = Mathf.Min(currentStamina + Time.deltaTime * 2, MaxStamina);
-            //    animator.speed = 0;
-            //}
-            
-
             if(Input.GetAxis("Horizontal")!=0)
             {
                 transform.Translate(6*Time.deltaTime * Input.GetAxis("Horizontal"), 0, 0);
@@ -114,19 +75,10 @@ public class AvatarController : MonoBehaviourPunCallbacks
                 rb.AddForce(Vector3.up * 400);
             }
 
-
-            //if(Input.GetAxis("Horizontal")!=0)
-            //{
-            //    if (rb.velocity.x < 3)
-            //    {
-            //        rb.AddForce(Vector3.right * Input.GetAxis("Horizontal") * 100);
-            //    }
-            //}
-            //else
-            //{
-            //    animator.speed = 0;
-            //}
-           
+            if (Input.GetKeyDown(KeyCode.Return) && isGround)
+            {
+                rb.AddForce(Vector3.right * 1000);
+            }
         }
 
         // スタミナをゲージに反映する
@@ -141,8 +93,20 @@ public class AvatarController : MonoBehaviourPunCallbacks
             playerCamera.SetActive(false);
             situationText.text = "YOUER LOST...";
             Destroy(this.gameObject);
+            playerProperty["alive"] = false;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperty);
         }
     }
+        
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable playerProperty)
+    {
+        foreach(var prop in playerProperty)
+        {
+            Debug.Log($"{targetPlayer.NickName}{targetPlayer.ActorNumber}/{prop.Key}: {prop.Value}");
+        }
+    }
+
+
 
     //void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     //{

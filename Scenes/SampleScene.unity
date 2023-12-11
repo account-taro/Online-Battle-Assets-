@@ -2114,6 +2114,7 @@ MonoBehaviour:
   btn: {fileID: 1856642703}
   scaffoldParent: {fileID: 1549855182}
   scaffolds: []
+  gameManager: {fileID: 1381672587}
 --- !u!114 &1270157261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2202,6 +2203,50 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24a6714074e70184983b38d910962cbf, type: 3}
+--- !u!1 &1381672586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1381672588}
+  - component: {fileID: 1381672587}
+  m_Layer: 0
+  m_Name: GaneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1381672587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381672586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4268d917459ad14a980c986a12d5977, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1381672588
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381672586}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.4819207, y: 18.101423, z: -0.6655528}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1398368242 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2728936620561582284, guid: 24a6714074e70184983b38d910962cbf, type: 3}

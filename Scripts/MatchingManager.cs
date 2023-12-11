@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 using System.Collections.Generic;
 using TMPro;
@@ -15,7 +16,7 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     public static bool gameStaet = false;
     public Transform scaffoldParent;
     public  List<Transform>  scaffolds;
-    ExitGames.Client.Photon.Hashtable hashtable;
+    public GameManager gameManager;
 
     private void Update()
     {
@@ -33,15 +34,11 @@ public class MatchingManager : MonoBehaviourPunCallbacks
         // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
         PhotonNetwork.NickName = "Player";
         PhotonNetwork.ConnectUsingSettings();
+        //gameManager.GetComponent<GameManager>();
         for (int i = 0; i < scaffoldParent.childCount; i++)
         {
             scaffolds.Add(scaffoldParent.GetChild(i));
         }
-        hashtable = new ExitGames.Client.Photon.Hashtable();    
-        hashtable["Score"] = 100000000000000000;
-        hashtable["Message"] = "こんにちは";
-        PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
-        Debug.Log(hashtable["Score"]);
     }
 
 
@@ -56,7 +53,7 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     // ランダムで参加できるルームが存在しないなら、新規でルームを作成する
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        // ルームの参加人数を2人に設定する
+        // ルームの参加人数を10人に設定する
         var roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 10;
         PhotonNetwork.CreateRoom(null, roomOptions);
@@ -88,7 +85,7 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void _CreatePlayer()
     {
-        position = scaffolds[Random.Range(0, 23)].position+new Vector3(0,1);
+        position = scaffolds[Random.Range(0, 23)].position + new Vector3(0, 1);
         if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
         {
             position = new Vector3(-17, 3);
@@ -101,6 +98,8 @@ public class MatchingManager : MonoBehaviourPunCallbacks
         situationText.text = "";
         gameStaet = true;
         btn.SetActive(false);
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        gameManager.roomProperty["playnum"] = PhotonNetwork.CurrentRoom.PlayerCount;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(gameManager.roomProperty);
     }
-
 }
