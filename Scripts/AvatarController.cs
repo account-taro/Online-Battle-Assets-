@@ -10,16 +10,14 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class AvatarController : MonoBehaviourPunCallbacks
     //,IPunObservable
 {
+    GameManager gameManager;
     Animator animator;
-    float horizintal;
-    float vertintal;
     Rigidbody2D rb;
     public GameObject underFoot;
     public bool isGround = false;
     GameObject mainCamera;
     public GameObject playerCamera;
     public TextMeshProUGUI situationText;
-    ExitGames.Client.Photon.Hashtable playerProperty;
     private void Start()
     {
         if (!photonView.IsMine)
@@ -34,9 +32,7 @@ public class AvatarController : MonoBehaviourPunCallbacks
         mainCamera = GameObject.Find("MainCamera");
         situationText = GameObject.Find("SituationText").GetComponent<TextMeshProUGUI>();
         mainCamera.SetActive(false);
-        playerProperty = new ExitGames.Client.Photon.Hashtable();
-        playerProperty["alive"] = true;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperty);
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     private const float MaxStamina = 6f;
@@ -75,14 +71,15 @@ public class AvatarController : MonoBehaviourPunCallbacks
                 rb.AddForce(Vector3.up * 400);
             }
 
-            if (Input.GetKeyDown(KeyCode.Return) && isGround)
-            {
-                rb.AddForce(Vector3.right * 1000);
-            }
+            //if (Input.GetKeyDown(KeyCode.Return) && isGround)
+            //{
+            //    rb.AddForce(Vector3.right * 1000);
+            //}
         }
 
         // スタミナをゲージに反映する
         //staminaBar.fillAmount = currentStamina / MaxStamina;
+        //Debug.Log(playerProperty["alive"]);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -92,9 +89,10 @@ public class AvatarController : MonoBehaviourPunCallbacks
             mainCamera.SetActive(true);
             playerCamera.SetActive(false);
             situationText.text = "YOUER LOST...";
+            gameManager.playerProperty["alive"] = false;
+            gameManager.reducePlayers();
+            PhotonNetwork.LocalPlayer.SetCustomProperties(gameManager.playerProperty);
             Destroy(this.gameObject);
-            playerProperty["alive"] = false;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperty);
         }
     }
         
@@ -102,10 +100,11 @@ public class AvatarController : MonoBehaviourPunCallbacks
     {
         foreach(var prop in playerProperty)
         {
-            Debug.Log($"{targetPlayer.NickName}{targetPlayer.ActorNumber}/{prop.Key}: {prop.Value}");
+            //Debug.Log($"{targetPlayer.NickName}{targetPlayer.ActorNumber}/{prop.Key}: {prop.Value}");
         }
     }
 
+ 
 
 
     //void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

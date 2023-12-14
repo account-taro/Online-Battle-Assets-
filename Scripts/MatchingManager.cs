@@ -43,6 +43,7 @@ public class MatchingManager : MonoBehaviourPunCallbacks
 
 
 
+
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnConnectedToMaster()
     {
@@ -75,6 +76,16 @@ public class MatchingManager : MonoBehaviourPunCallbacks
         }
     }
 
+    // 他プレイヤーがルームから退出した時に呼ばれるコールバック
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        //Debug.Log($"{otherPlayer.NickName}が退出しました");
+        if(gameStaet)
+        {
+            gameManager.reducePlayers();
+        }
+    }
+
 
 
     public void CreatePlayer()
@@ -96,10 +107,10 @@ public class MatchingManager : MonoBehaviourPunCallbacks
         }
         PhotonNetwork.Instantiate("Avatar", position, Quaternion.identity);
         situationText.text = "";
-        gameStaet = true;
         btn.SetActive(false);
         PhotonNetwork.CurrentRoom.IsOpen = false;
-        gameManager.roomProperty["playnum"] = PhotonNetwork.CurrentRoom.PlayerCount;
+        gameManager.roomProperty["numberOfPeople"] = PhotonNetwork.CurrentRoom.PlayerCount;
         PhotonNetwork.CurrentRoom.SetCustomProperties(gameManager.roomProperty);
+        gameStaet = true;
     }
 }
