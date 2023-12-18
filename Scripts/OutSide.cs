@@ -6,10 +6,6 @@ using Photon.Pun;
 public class OutSide : MonoBehaviourPunCallbacks
 {    
     public GameManager gameManager;
-    void Start()
-    {
-
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

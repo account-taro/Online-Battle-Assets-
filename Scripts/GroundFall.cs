@@ -17,9 +17,13 @@ public class GroundFall: MonoBehaviourPunCallbacks
     private void Update()
     {
         rb.WakeUp();
-        if(fallTime > 1)
+        if(fallTime > 3)
         {
             photonView.RPC(nameof(Fall), RpcTarget.All);
+        }
+        if(GameManager.gameEnd)
+        {
+            rb.bodyType = RigidbodyType2D.Static;
         }
     }
 
@@ -42,7 +46,7 @@ public class GroundFall: MonoBehaviourPunCallbacks
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "UnderFoot")
+        if (collision.gameObject.tag == "UnderFoot" && !GameManager.gameEnd)
         {
             photonView.RPC(nameof(Count), RpcTarget.All);
         }

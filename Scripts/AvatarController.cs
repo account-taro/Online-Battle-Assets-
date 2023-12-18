@@ -17,7 +17,7 @@ public class AvatarController : MonoBehaviourPunCallbacks
     public bool isGround = false;
     GameObject mainCamera;
     public GameObject playerCamera;
-    public TextMeshProUGUI situationText;
+    public float wait;
     private void Start()
     {
         if (!photonView.IsMine)
@@ -29,25 +29,28 @@ public class AvatarController : MonoBehaviourPunCallbacks
         rb = GetComponent<Rigidbody2D>();
         animator.SetBool("Beside", true);
         underFoot = transform.Find("UnderFoot").gameObject;
-        mainCamera = GameObject.Find("MainCamera");
-        situationText = GameObject.Find("SituationText").GetComponent<TextMeshProUGUI>();
-        mainCamera.SetActive(false);
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        mainCamera = GameObject.Find("MainCamera"); 
+        mainCamera.SetActive(false);
+        //photonView.RPC(nameof(ChangeName), RpcTarget.All);
+        //Debug.Log(photonView.Controller);
+        //this.name =  photonView.Controller.ActorNumber.ToString();
     }
 
-    private const float MaxStamina = 6f;
+    //private const float MaxStamina = 6f;
 
-    [SerializeField]
-    private Image staminaBar = default;
+    //[SerializeField]
+    //private Image staminaBar = default;
 
-    private float currentStamina = MaxStamina;
+    //private float currentStamina = MaxStamina;
 
 
     private void Update()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine && !GameManager.gameEnd && wait<0)
         {
-            if(Input.GetAxis("Horizontal")!=0)
+            photonView.RPC(nameof(ChangeWalkAnimation), RpcTarget.All);
+            if (Input.GetAxis("Horizontal")!=0)
             {
                 transform.Translate(6*Time.deltaTime * Input.GetAxis("Horizontal"), 0, 0);
                 animator.SetFloat("Speed", 1);
@@ -77,6 +80,7 @@ public class AvatarController : MonoBehaviourPunCallbacks
             //}
         }
 
+        wait-= Time.deltaTime;
         // ƒXƒ^ƒ~ƒi‚ðƒQ[ƒW‚É”½‰f‚·‚é
         //staminaBar.fillAmount = currentStamina / MaxStamina;
         //Debug.Log(playerProperty["alive"]);
@@ -84,27 +88,47 @@ public class AvatarController : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag=="OutSide" && photonView.IsMine)
+        if(collision.gameObject.tag=="OutSide" && photonView.IsMine && !GameManager.gameEnd)
         {
-            mainCamera.SetActive(true);
-            playerCamera.SetActive(false);
-            situationText.text = "YOUER LOST...";
-            gameManager.playerProperty["alive"] = false;
-            gameManager.reducePlayers();
-            PhotonNetwork.LocalPlayer.SetCustomProperties(gameManager.playerProperty);
-            Destroy(this.gameObject);
+            gameManager.Lost(playerCamera,this.gameObject);
         }
-    }
-        
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable playerProperty)
-    {
-        foreach(var prop in playerProperty)
+
+        if(collision.gameObject.tag=="FallingObject")
         {
-            //Debug.Log($"{targetPlayer.NickName}{targetPlayer.ActorNumber}/{prop.Key}: {prop.Value}");
+            photonView.RPC(nameof(ChangeDamageAnimation), RpcTarget.All);
+            wait = 1;
+            //Debug.Log(PhotonNetwork.LocalPlayer.ActorNumber+"‚ªG‚ê‚Ü‚µ‚½");
         }
     }
 
- 
+    [PunRPC]
+    public void ChangeDamageAnimation()
+    {
+        animator.SetBool("Damage", true);
+        animator.SetBool("Beside", false);
+    }
+
+    [PunRPC]
+    void ChangeWalkAnimation()
+    {
+        animator.SetBool("Damage", false);
+        animator.SetBool("Beside", true);
+    }
+
+    //public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable playerProperty)
+    //{
+    //    foreach(var prop in playerProperty)
+    //    {
+    //        //Debug.Log($"{targetPlayer.NickName}{targetPlayer.ActorNumber}/{prop.Key}: {prop.Value}");
+    //    }
+    //}
+
+    //[PunRPC]
+    //void ChangeName()
+    //{
+    //    string playerName = (PhotonNetwork.LocalPlayer.CustomProperties["playerName"] is string value) ? value : "";
+    //    this.name = playerName;
+    //}
 
 
     //void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -120,4 +144,9 @@ public class AvatarController : MonoBehaviourPunCallbacks
     //        currentStamina = (float)stream.ReceiveNext();
     //    }
     //}
+}
+
+class Test : AvatarController
+{
+
 }

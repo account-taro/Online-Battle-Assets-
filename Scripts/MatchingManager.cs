@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
@@ -32,13 +33,13 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
-        PhotonNetwork.NickName = "Player";
         PhotonNetwork.ConnectUsingSettings();
         //gameManager.GetComponent<GameManager>();
         for (int i = 0; i < scaffoldParent.childCount; i++)
         {
             scaffolds.Add(scaffoldParent.GetChild(i));
         }
+        //btn = GameObject.Find("StartBtn");
     }
 
 
@@ -63,7 +64,9 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
-
+        gameManager.gameObject.SetActive(true);
+        PhotonNetwork.NickName = "Player(ID-" + PhotonNetwork.LocalPlayer.ActorNumber+")";
+        int id = photonView.OwnerActorNr;
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.CurrentRoom.SetStartTime(PhotonNetwork.ServerTimestamp);
@@ -96,21 +99,40 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void _CreatePlayer()
     {
+        StartCoroutine(CreatePlayerCoroutine());
+    }
+
+
+    IEnumerator CreatePlayerCoroutine()
+    {
+        gameStaet = true;
+        btn.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        gameManager.situationText.text = "3";
+        yield return new WaitForSeconds(1);
+        gameManager.situationText.text = "2";
+        yield return new WaitForSeconds(1);
+        gameManager.situationText.text = "1";
+        yield return new WaitForSeconds(1);
+        gameManager.situationText.text = "START";
+        yield return new WaitForSeconds(1);
+        gameManager.situationText.text = "";
         position = scaffolds[Random.Range(0, 23)].position + new Vector3(0, 1);
         if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
         {
             position = new Vector3(-17, 3);
         }
-        else if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
+        else
+        if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
         {
             position = new Vector3(18, 2);
         }
         PhotonNetwork.Instantiate("Avatar", position, Quaternion.identity);
-        situationText.text = "";
-        btn.SetActive(false);
         PhotonNetwork.CurrentRoom.IsOpen = false;
         gameManager.roomProperty["numberOfPeople"] = PhotonNetwork.CurrentRoom.PlayerCount;
+        //gameManager.playerProperty["playerName"] = PhotonNetwork.LocalPlayer.NickName + "(" + PhotonNetwork.LocalPlayer.ActorNumber + ")";
+        //Debug.Log(PhotonNetwork.LocalPlayer.NickName + "(" + PhotonNetwork.LocalPlayer.ActorNumber + ")");
+        PhotonNetwork.LocalPlayer.SetCustomProperties(gameManager.playerProperty);
         PhotonNetwork.CurrentRoom.SetCustomProperties(gameManager.roomProperty);
-        gameStaet = true;
     }
 }

@@ -391,7 +391,7 @@ GameObject:
   - component: {fileID: 9116471420811382945}
   m_Layer: 0
   m_Name: Avatar
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -506,8 +506,7 @@ MonoBehaviour:
   underFoot: {fileID: 8164856686979903103}
   isGround: 0
   playerCamera: {fileID: 8207992597884664209}
-  situationText: {fileID: 0}
-  staminaBar: {fileID: 3618582949207313696}
+  wait: 0
 --- !u!114 &3501107991222186865
 MonoBehaviour:
   m_ObjectHideFlags: 0
