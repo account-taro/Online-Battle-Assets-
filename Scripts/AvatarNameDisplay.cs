@@ -6,7 +6,7 @@ public class AvatarNameDisplay : MonoBehaviourPunCallbacks
     void Start()
     {
         var  nameLabel = GetComponent<TextMeshPro>();
-        nameLabel.text = $"{photonView.Owner.NickName}({photonView.OwnerActorNr})";
+        nameLabel.text = $"{photonView.Owner.NickName}";
     }
 
     // Update is called once per frame

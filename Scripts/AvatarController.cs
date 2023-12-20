@@ -80,6 +80,15 @@ public class AvatarController : MonoBehaviourPunCallbacks
             //}
         }
 
+        if(GameManager.gameEnd)
+        {
+            bool alive = (PhotonNetwork.LocalPlayer.CustomProperties["alive"] is bool value) ? value : false;
+            if(alive)
+            {
+                photonView.RPC(nameof(ChangeWinAnimation), RpcTarget.All);
+            }
+        }
+
         wait-= Time.deltaTime;
         // スタミナをゲージに反映する
         //staminaBar.fillAmount = currentStamina / MaxStamina;
@@ -90,6 +99,7 @@ public class AvatarController : MonoBehaviourPunCallbacks
     {
         if(collision.gameObject.tag=="OutSide" && photonView.IsMine && !GameManager.gameEnd)
         {
+            this.gameObject.name = "Loster";
             gameManager.Lost(playerCamera,this.gameObject);
         }
 
@@ -97,7 +107,6 @@ public class AvatarController : MonoBehaviourPunCallbacks
         {
             photonView.RPC(nameof(ChangeDamageAnimation), RpcTarget.All);
             wait = 1;
-            //Debug.Log(PhotonNetwork.LocalPlayer.ActorNumber+"が触れました");
         }
     }
 
@@ -113,6 +122,13 @@ public class AvatarController : MonoBehaviourPunCallbacks
     {
         animator.SetBool("Damage", false);
         animator.SetBool("Beside", true);
+    }
+    [PunRPC]
+    void ChangeWinAnimation()
+    {
+        animator.SetBool("Win", true);
+        animator.SetBool("Beside", false);
+        animator.SetBool("Damage", false);
     }
 
     //public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable playerProperty)
@@ -144,9 +160,4 @@ public class AvatarController : MonoBehaviourPunCallbacks
     //        currentStamina = (float)stream.ReceiveNext();
     //    }
     //}
-}
-
-class Test : AvatarController
-{
-
 }

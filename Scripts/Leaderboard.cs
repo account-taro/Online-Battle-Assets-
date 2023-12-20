@@ -51,9 +51,10 @@ public class Leaderboard : MonoBehaviour
         );
 
         builder.Clear();
+        label.text = "Players";
         foreach (var player in players)
         {
-            builder.AppendLine($"{player.NickName}({player.ActorNumber}) - {player.GetScore()}");
+            builder.AppendLine($"{player.NickName}");
         }
         label.text = builder.ToString();
     }

@@ -8,7 +8,6 @@ public class FallingObject : MonoBehaviourPunCallbacks
     SpriteRenderer spriteRenderer;
     private void Start()
     {
-        Debug.Log(PhotonNetwork.IsMasterClient);
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
     private void OnTriggerStay2D(Collider2D collision)
@@ -26,9 +25,34 @@ public class FallingObject : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        if(MatchingManager.gameStaet)
+        if(MatchingManager.gameStaet2)
         {
             transform.Translate(0, -0.1f, 0);
         }
+
+        if(GameManager.gameEnd)
+        {
+            Destroy(this.gameObject);
+        }
+        //Test2 test2 = new Test2(2,"ttt");
+        //test2.TestFunc();
+    }
+}
+
+class Test2:GroundFall
+{
+    int a;
+    string b;
+
+    public Test2(int _a, string _b)
+    {
+        this.a = _a;
+        this.b = _b;
+        
+    }
+
+    public void TestFunc()
+    {
+        Debug.Log(a + b);
     }
 }

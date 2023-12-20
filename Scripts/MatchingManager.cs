@@ -15,9 +15,11 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     Player[] players;
     public GameObject btn;
     public static bool gameStaet = false;
+    public static bool gameStaet2 = false;
     public Transform scaffoldParent;
     public  List<Transform>  scaffolds;
     public GameManager gameManager;
+    public GameObject leaderboard;
 
     private void Update()
     {
@@ -65,7 +67,7 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         gameManager.gameObject.SetActive(true);
-        PhotonNetwork.NickName = "Player(ID-" + PhotonNetwork.LocalPlayer.ActorNumber+")";
+        PhotonNetwork.NickName = "Player" + PhotonNetwork.LocalPlayer.ActorNumber;
         int id = photonView.OwnerActorNr;
         if (PhotonNetwork.IsMasterClient)
         {
@@ -106,6 +108,7 @@ public class MatchingManager : MonoBehaviourPunCallbacks
     IEnumerator CreatePlayerCoroutine()
     {
         gameStaet = true;
+        leaderboard.SetActive(false);
         btn.SetActive(false);
         yield return new WaitForSeconds(0.5f);
         gameManager.situationText.text = "3";
@@ -117,16 +120,17 @@ public class MatchingManager : MonoBehaviourPunCallbacks
         gameManager.situationText.text = "START";
         yield return new WaitForSeconds(1);
         gameManager.situationText.text = "";
+        gameStaet2 = true;
         position = scaffolds[Random.Range(0, 23)].position + new Vector3(0, 1);
-        if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
-        {
-            position = new Vector3(-17, 3);
-        }
-        else
-        if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
-        {
-            position = new Vector3(18, 2);
-        }
+        //if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
+        //{
+        //    position = new Vector3(-17, 3);
+        //}
+        //else
+        //if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
+        //{
+        //    position = new Vector3(18, 2);
+        //}
         PhotonNetwork.Instantiate("Avatar", position, Quaternion.identity);
         PhotonNetwork.CurrentRoom.IsOpen = false;
         gameManager.roomProperty["numberOfPeople"] = PhotonNetwork.CurrentRoom.PlayerCount;

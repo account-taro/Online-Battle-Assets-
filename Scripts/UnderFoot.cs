@@ -16,12 +16,15 @@ public class UnderFoot : MonoBehaviour
         if(collision.gameObject.tag== "Ground" || collision.gameObject.tag == "Player")
         {
             controller.isGround = true;
-            if(collision.gameObject.tag == "Player")
-            {
-                AvatarController target = collision.gameObject.GetComponent<AvatarController>();
-                target.photonView.RPC(nameof(target.ChangeDamageAnimation), RpcTarget.All);
-                target.wait = 1;
-            }
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            AvatarController target = collision.gameObject.GetComponent<AvatarController>();
+            target.photonView.RPC(nameof(target.ChangeDamageAnimation), RpcTarget.All);
+            target.wait = 1;
         }
     }
 

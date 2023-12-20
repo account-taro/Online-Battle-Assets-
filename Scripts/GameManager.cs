@@ -34,10 +34,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         playerProperty["alive"] = true;
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperty);
         PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
-        foreach (var e in roomProperty)
-        {
-            Debug.Log($"{e.Key}:{e.Value}");
-        }
+     
 
     }
 
@@ -64,22 +61,28 @@ public class GameManager : MonoBehaviourPunCallbacks
         bool alive = (PhotonNetwork.LocalPlayer.CustomProperties["alive"] is bool value) ? value : true;
         if (alive)
         {
-            situationText.text = "YOUER WIN!!";
-            //roomProperty["winPlayer"] = GameObject.Find(PhotonNetwork.LocalPlayer.NickName + "/" + PhotonNetwork.LocalPlayer.ActorNumber);
-            roomProperty["winPlayerName"] = PhotonNetwork.LocalPlayer.NickName;
-            PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
-            Debug.Log(roomProperty["winPlayerName"]);
-            gameEnd = true;
+            
+            StartCoroutine(WinCoroutine());
+            IEnumerator WinCoroutine()
+            {
+                situationText.text = "YOUER WIN!!";
+                roomProperty["winPlayerName"] = PhotonNetwork.LocalPlayer.NickName;
+                PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
+                gameEnd = true;
+                yield return new WaitForSeconds(1);
+                winPlayer = GameObject.Find("Avatar(Clone)");
+                GameObject winPlayerCamera = winPlayer.transform.Find("Camera").gameObject;
+                winPlayerCamera.SetActive(true);
+            }
         }
         else
         {
-            StartCoroutine(WinCoroutine());
-            IEnumerator WinCoroutine()
+            StartCoroutine(LostCoroutine());
+            IEnumerator LostCoroutine()
             {
                 yield return new WaitForSeconds(1); // ìKêÿÇ»ë“Çøéûä‘Çê›íË
                 string winPlayerName = (PhotonNetwork.CurrentRoom.CustomProperties["winPlayerName"] is string value2) ? value2 : "";
                 situationText.text = "WINNER " + winPlayerName;
-                Debug.Log(roomProperty["winPlayerName"]);
                 gameEnd = true;
             }
         }
